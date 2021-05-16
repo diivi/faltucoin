@@ -58,6 +58,9 @@ class Transaction():
     
     self.input= self.create_input(sender_wallet,self.output)
 
+  def to_json(self):
+    return self.__dict__
+
   @staticmethod
   def is_valid_transaction(transaction):
     """
