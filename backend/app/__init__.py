@@ -4,10 +4,11 @@ from backend.pubsub import PubSub
 import os
 import random
 import backend.env
+import requests
 
 app = Flask(__name__)
 blockchain = Blockchain()
-pubsub=PubSub()
+pubsub=PubSub(blockchain)
 
 @app.route('/')
 def default_route():
@@ -31,6 +32,16 @@ def mining_route():
 PORT = 5000
 
 if os.environ.get('PEER')=='True':
-  PORT=random.randint(5001,6000)
+  PORT = random.randint(5001, 6000)
+  
+  result = requests.get('http://localhost:5000/blockchain')
+  
+  result_blockchain = Blockchain.from_json(result.json())
+
+  try:
+    blockchain.replace_chain(result_blockchain.chain)
+    print('\n -- Successfully synchronized the local chain')
+  except Exception as e:
+    print(f'\n -- Error synchronizing: {e}')
 
 app.run(port=PORT)
