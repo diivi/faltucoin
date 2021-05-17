@@ -1,6 +1,9 @@
 
 
 class TransactionPool:
+  """
+  stores transactions not yet added to the blockchain 
+  """
   def __init__(self):
     self.transaction_map = {}
     
@@ -17,3 +20,20 @@ class TransactionPool:
     for transaction in self.transaction_map.values():
       if transaction.input['address'] == address:
         return transaction
+
+  def transaction_data(self):
+    """
+    return transactions of the transaction pool represented in their serialized form
+    """
+    return list(map(lambda transaction: transaction.to_json(),self.transaction_map.values()))
+
+  def clear_blockchain_transactions(self,blockchain):
+    """
+    Delete transactions that are included in the blockchain from the transaction pool
+    """
+    for block in blockchain.chain:
+      for transaction in block.data:
+        try:
+          del self.transaction_map[transaction['id']]
+        except KeyError:
+          pass

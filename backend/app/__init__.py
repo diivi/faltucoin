@@ -13,7 +13,7 @@ import requests
 
 app = Flask(__name__)
 blockchain = Blockchain()
-wallet = Wallet()
+wallet = Wallet(blockchain)
 transaction_pool = TransactionPool()
 pubsub=PubSub(blockchain,transaction_pool)
 
@@ -27,12 +27,15 @@ def blockchain_route():
 
 @app.route('/blockchain/mine')
 def mining_route():
-  transaction_data = 'hard_transaction_data'
+
+  transaction_data = transaction_pool.transaction_data()
+  transaction_data.append(Transaction.reward_transaction(wallet).to_json())
 
   blockchain.add_block(transaction_data)
   
   block=blockchain.chain[-1]
   pubsub.broadcast_block(block)
+  transaction_pool.clear_blockchain_transactions(blockchain)
 
   return jsonify(block.to_json())
 
@@ -49,6 +52,10 @@ def wallet_transaction_route():
   pubsub.broadcast_transaction(transaction)
 
   return jsonify(transaction.to_json())
+
+@app.route('/wallet/info')
+def wallet_info_route():
+  return jsonify({'address':wallet.address,'balance':wallet.balance})
 
 PORT = 5000
 

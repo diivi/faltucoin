@@ -19,12 +19,16 @@ class Wallet:
   Keeps track of the miner's balance.
   Allows miner to authorize transactions
   """
-  def __init__(self):
+  def __init__(self, blockchain = None):
+    self.blockchain = blockchain
     self.address = str(uuid.uuid4())[:8]
-    self.balance = STARTING_BALANCE
     self.private_key = ec.generate_private_key(ec.SECP256K1(), default_backend())
     self.public_key = self.private_key.public_key()
     self.serialize_public_key()
+
+  @property
+  def balance(self):
+    return Wallet.calculate_balance(self.blockchain,self.address)
 
   def sign(self, data):
     """
@@ -62,7 +66,25 @@ class Wallet:
       return True
     except InvalidSignature:
       return False
-      
+    
+  @staticmethod
+  def calculate_balance(blockchain, address):
+    """
+    calc balance of a given address considering transaction data within the blockchain
+    balance => output values belonging to the address + most recent transaction by address
+    """
+    balance = STARTING_BALANCE
+    
+    if not blockchain:
+      return balance
+
+    for block in blockchain.chain:
+      for transaction in block.data:
+        if transaction['input']['address'] == address:
+          balance = transaction['output'][address]
+        elif address in transaction['output']:
+          balance += transaction['output'][address]
+    return balance
 
 def main():
   wallet = Wallet()

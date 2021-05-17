@@ -43,7 +43,7 @@ class Blockchain:
     """
     blockchain = Blockchain()
     blockchain.chain = list(map(lambda block_json: Block.from_json(block_json), chain_json))
-    return blokchain
+    return blockchain
 
   @staticmethod
   def is_valid_chain(chain):
