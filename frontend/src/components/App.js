@@ -1,11 +1,13 @@
 import React,{useState, useEffect} from 'react';
 import logo from '../assets/logo.png'
+import { baseUrl } from "../config";
+import Blockchain from './Blockchain'
 
 function App() {
   const [walletInfo,setWalletInfo] = useState({})
 
   useEffect(() => {
-    fetch('http://localhost:5000/wallet/info')
+    fetch(`${baseUrl}/wallet/info`)
       .then(response => response.json())
       .then(json => setWalletInfo(json))
   }, [])
@@ -21,6 +23,8 @@ function App() {
         <p>Address : {address}</p>
         <p>Balance : {balance}</p>
       </div>
+      <br />
+      <Blockchain/>
     </div>
   );
 }
