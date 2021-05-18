@@ -1,0 +1,14 @@
+.App{
+  margin-left:50% ;
+  transform:translateX(-50%);
+  text-align: center;
+}
+body{
+  background-color: black;
+}
+h3{
+  color:white
+}
+p{
+  color:white
+}
