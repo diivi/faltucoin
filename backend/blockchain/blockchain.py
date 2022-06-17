@@ -30,8 +30,8 @@ class Blockchain:
     try:
       Blockchain.is_valid_chain(chain)
     except Exception as e:
-      raise Exception(f'Cannot replace! Incoming chain is not valid!')
-    
+      raise Exception('Cannot replace! Incoming chain is not valid!')
+
     self.chain = chain
 
   def to_json(self):
@@ -83,19 +83,21 @@ class Blockchain:
         transaction = Transaction.from_json(transaction_json)
         if transaction.id in transaction_ids:
           raise Exception(f'Transaction {transaction.id} is not unique!')
-        
+
         transaction_ids.add(transaction.id)
 
         if transaction.input == MINING_REWARD_INPUT:
           if has_mining_reward == True:
-            raise Exception('There can only be one mining reward per block!'+f' Check block with hash {block.hash}')
+            raise Exception(
+                f'There can only be one mining reward per block! Check block with hash {block.hash}'
+            )
           has_mining_reward = True
         else:
           blockchain_history = Blockchain()
-          blockchain_history.chain = chain[0:i]
+          blockchain_history.chain = chain[:i]
 
           balance_history = Wallet.calculate_balance(blockchain_history,transaction.input['address'])
-    
+
           if balance_history != transaction.input['amount']:
             raise Exception(f'Transaction {transaction.id} has an invalid input amount!')
 
