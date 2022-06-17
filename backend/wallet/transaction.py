@@ -11,7 +11,7 @@ class Transaction():
   Document the exchange of currency between a sender and one or more recipients.
   """
   def __init__(self, sender_wallet=None, recipient=None, amount=None,id=None, output=None, input=None):
-    self.id = id or  str(uuid.uuid4())[0:8]
+    self.id = id or str(uuid.uuid4())[:8]
     self.output = output or  self.create_output(
       sender_wallet,
       recipient,
@@ -26,11 +26,10 @@ class Transaction():
     if amount > sender_wallet.balance:
       raise Exception('Amount exceeds balance!')
 
-    output = {}
-    output[recipient] = amount
-    output[sender_wallet.address] = sender_wallet.balance - amount
-    
-    return output
+    return {
+        recipient: amount,
+        sender_wallet.address: sender_wallet.balance - amount,
+    }
 
   def create_input(self, sender_wallet, output):
     """
@@ -82,10 +81,10 @@ class Transaction():
       return 
 
     output_total=sum(transaction.output.values())
-    
+
     if transaction.input['amount'] != output_total:
       raise Exception('Invalid Transaction output values!')
-     
+
     if not Wallet.verify(
       transaction.input['public_key'],
       transaction.output,
@@ -98,9 +97,7 @@ class Transaction():
     """
     Generate a reward transaction that awards the miner
     """
-    output = {}
-    output[miner_wallet.address] = MINING_REWARD
-    
+    output = {miner_wallet.address: MINING_REWARD}
     return Transaction(input = MINING_REWARD_INPUT,output=output)
 
 def main():

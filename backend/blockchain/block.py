@@ -57,8 +57,8 @@ class Block:
     difficulty = Block.adjust_difficulty(last_block,timestamp)
     nonce=0
     hash = crypto_hash(timestamp, last_hash, data, difficulty, nonce)
-    
-    while hex_to_binary(hash)[0:difficulty] != '0' * difficulty:
+
+    while hex_to_binary(hash)[:difficulty] != '0' * difficulty:
       nonce += 1
       timestamp = time.time_ns()
       difficulty = Block.adjust_difficulty(last_block,timestamp)
@@ -94,10 +94,7 @@ class Block:
     if (new_timestamp - last_block.timestamp) < MINE_RATE:
       return last_block.difficulty+1
     else:
-      if (last_block.difficulty>1):
-        return last_block.difficulty - 1
-      else:
-        return 1
+      return last_block.difficulty - 1 if (last_block.difficulty>1) else 1
   @staticmethod
   def is_valid_block(last_block,block):
     """
@@ -110,7 +107,7 @@ class Block:
     if block.last_hash != last_block.hash:
       raise Exception("The block's last_hash is invalid!")
 
-    if hex_to_binary(block.hash)[0: block.difficulty] != '0' * block.difficulty:
+    if hex_to_binary(block.hash)[:block.difficulty] != '0' * block.difficulty:
       raise Exception("The PoW requirement was not met!")
 
     if abs(last_block.difficulty - block.difficulty) > 1:

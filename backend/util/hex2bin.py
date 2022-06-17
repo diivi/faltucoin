@@ -20,12 +20,8 @@ HEX_TO_BINARY_CONVERSION_TABLE = {
 }
 
 def hex_to_binary(hex_string):
-  binary_string = ''
-
-  for character in hex_string:
-    binary_string += HEX_TO_BINARY_CONVERSION_TABLE[character]
-  
-  return binary_string
+  return ''.join(
+      HEX_TO_BINARY_CONVERSION_TABLE[character] for character in hex_string)
 
 def main():
   number = 451
@@ -34,7 +30,7 @@ def main():
   print(f'hex number: {hex_number}')
   print(f'binary number: {hex_to_binary(hex_number)}')
   print(f'original number: {int(hex_to_binary(hex_number),2)}\n')
-  
+
   hex_to_bin_crypto_hash = hex_to_binary(crypto_hash('test-data'))
 
   print(f'hex_to_bin_crypto_hash: {hex_to_bin_crypto_hash}')

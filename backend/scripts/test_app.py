@@ -5,19 +5,22 @@ import time
 BASE_URL = 'http://localhost:5000'
 
 def get_blockchain():
-  return requests.get(BASE_URL+'/blockchain').json()
+  return requests.get(f'{BASE_URL}/blockchain').json()
 
 def get_blockchain_mine():
-  return requests.get(BASE_URL+'/blockchain/mine').json()
+  return requests.get(f'{BASE_URL}/blockchain/mine').json()
 
 def post_wallet_transact(recipient,amount):
-  return requests.post(BASE_URL + '/wallet/transact', json={
-    'recipient': recipient,
-    'amount':amount
-  }).json()
+  return requests.post(
+      f'{BASE_URL}/wallet/transact',
+      json={
+          'recipient': recipient,
+          'amount': amount
+      },
+  ).json()
 
 def get_wallet_info():
-  return requests.get(BASE_URL+'/wallet/info').json()
+  return requests.get(f'{BASE_URL}/wallet/info').json()
 
 start_blockchain = get_blockchain()
 
